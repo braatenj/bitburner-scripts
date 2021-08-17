@@ -9,6 +9,12 @@
     buildServerList(ns);
     buildPortCrackerList(ns);
 
+    var phase1 = true;
+
+    while(phase1) {
+        doTargetingLoop(ns);
+    }
+
 
 }
 
@@ -19,6 +25,10 @@ const serversByRam = [];
 const serversByPortsRequired = [];
 const serversNotRooted = [];
 const portCrackers = [];
+
+//constants
+const RAM_COST_TO_PREP_PER_THREAD = 2.35;
+const RAM_COST_TO_HACK_PER_THREAD = 2.45;
 
 
 function buildPortCracker(ns, crackName) {
@@ -83,6 +93,25 @@ function updateServersNotRootedList() {
 function doTargetingLoop(ns) {
     updateServersNotRootedList();
     getRootOnPossibleServers(ns);
+    sortServers('ports');
+
+    for(var i = 0; i < serversByPortsRequired.length; i++) {
+        var currentTarget = serversByPortsRequired[i];
+
+        if(currentTarget.name == "home") {
+            continue;
+        }
+
+        if(currentTarget.canCrack() && (!currentTarget.isPrepping() && !currentTarget.isTarget()) && (currentTarget.canHackcurrentTarget.security() > currentTarget.minSecurity || currentTarget.money() < currentTarget.maxMoney)) {
+            prepServer(ns, currentTarget);
+            await ns.sleep(1000);
+        }
+
+        if(!currentTarget.isPrepping() && !currentTarget.isTarget() && (currentTarget.money() == currentTarget.maxMoney && currentTarget.security() == currentTarget.minSecurity)) {
+            hackServer(ns, currentTarget);
+            await ns.sleep(1000);
+        }
+    }
 
 
 }
@@ -94,6 +123,7 @@ function getRootOnPossibleServers(ns) {
             if(!target.isRooted()) {
                 if(target.canCrack()) {
                     doRoot(ns, target);
+                    await ns.sleep(200);
                 }
             }
         }
@@ -105,8 +135,24 @@ function doRoot(ns, server) {
         if(portCrackers[i].exists()) {
             portCrackers[i].runAt(server.name);
         }
+        await ns.sleep(200);
     }
     ns.nuke(server.name)
+}
+
+function hackServer(ns, server) {
+    if(!server.isRooted()) {
+        if(server.canCrack()) {
+            doRoot(ns, server);
+        }
+    }
+
+    if(!doesFileExistOnServer(ns, "/scripts/phase1/bn-hack-host.js", server)) {
+        copyFiles(ns, ["/scripts/phase1/bn-hack-host.js"], server);
+    }
+
+    var maxThreads = Math.floor(server.getRam() / RAM_COST_TO_HACK_PER_THREAD);
+    ns.exec("/scripts/phase1/bn-hack-host.js", server.name, maxThreads);
 }
 
 function prepServer(ns, server) {
@@ -116,13 +162,24 @@ function prepServer(ns, server) {
         }
     }
 
-    copyFiles(ns, ["bn-prep-host-phase-1.js", "bn-hack-host-phase-1.js"], server);
+    if(!doesFileExistOnServer(ns, "/scipts/phase1/bn-prep-host.js", server)) {
+        copyFiles(ns, ["/scripts/phase1/bn-prep-host.js", "/scripts/phase1/bn-hack-host.js"], server);
+    }
+
+    var maxThreads = Math.floor(server.getRam() / RAM_COST_TO_PREP_PER_THREAD);
+
+    ns.exec("/scripts/phase1/bn-prep-host.js", server.name, maxThreads);
     
+
+    
+}
+
+function doesFileExistOnServer(ns, file, server) {
+    return ns.fileExists(file, server.name);
 }
 
 function copyFiles(ns, files, server) {
     ns.scp(files, server.name);
-
 }
 
 //function cost .85GB
@@ -134,21 +191,25 @@ function buildServerObject(ns, serverNode) {
         maxMoney: ns.getServerMaxMoney(serverNode),
         money: function() { return this.instance.getServerMoneyAvailable(this.name); },
         minSecurity: ns.getServerMinSecurityLevel(serverNode),
-        security: function() { return this.instance.getServerMinSecurityLevel(this.name); },
+        security: function() { return this.instance.getServerSecurityLevel(this.name); },
         hackingRequired: ns.getServerRequiredHackingLevel(serverNode),
         portsRequired: ns.getServerNumPortsRequired(serverNode),
-        canHack: function() { return this.hackingRequired <= this.instance.getHackingLevel(); },
-        canCrack: function() { return this.portsRequired <= getPortCrackers(ns); },
+        canHack: function() { return (this.hackingRequired <= this.instance.getHackingLevel() && this.name !== "home"); },
+        canCrack: function() { return (this.portsRequired <= getPortCrackers(ns) && this.name !== "home"); },
         isRooted: function() { return this.instance.hasRootAccess(this.name); },
         timeToWeaken: function() { return this.instance.getWeakTime(this.name); },
         timeToGrow: function() { return this.instance.getGrowTime(this.name); },
         timeToHack: function() { return this.instance.getHackTime(this.name); },
         growthRate: ns.getServerGrowth(serverNode),
         value: 1,
-        isPrepping: function() { /*function to see if prep files are on this server and running*/},
-        isTarget: function() { /** function to see if a server is targeting this one */},
+        isPrepping: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-prep-host.js", this.name); },
+        isTarget: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-hack-host.js", this.name); },
     }
     return server;
+}
+
+function isFileRunningOnServer(ns, file, server) {
+    return ns.scriptRunning(file, server.name);
 }
 
 //
