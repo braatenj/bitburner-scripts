@@ -34,6 +34,8 @@
 
     var phase1 = true;
 
+    serversByPortsRequired[0]
+
     while(phase1) {
         await doTargetingLoop(ns);
     }
@@ -186,6 +188,7 @@ async function prepServer(ns, server) {
 }
 
 function doesFileExistOnServer(ns, file, server) {
+    ns.tprint(server.toString());
     return ns.fileExists(file, server.name);
 }
 
@@ -215,11 +218,14 @@ function buildServerObject(ns, serverNode) {
         value: 1,
         isPrepping: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-prep-host.js", this.name); },
         isTarget: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-hack-host.js", this.name); },
+        toString: function() { return "Name: " + this.name + " MaxMoney: " + this.maxMoney; }
     };
     return server;
 }
 
 function isFileRunningOnServer(ns, file, server) {
+    ns.tprint(server.toString());
+    ns.tprint(file);
     return ns.scriptRunning(file, server.name);
 }
 
