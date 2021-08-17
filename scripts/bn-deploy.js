@@ -38,7 +38,7 @@ export async function main(ns) {
 
     if(data.phase == 1) {
         if(allFilesDownloaded(ns)) {
-            ns.run("/scripts/phase1/bn-daemon.js");
+            await ns.run("/scripts/phase1/bn-daemon.js");
         }
     }
 }

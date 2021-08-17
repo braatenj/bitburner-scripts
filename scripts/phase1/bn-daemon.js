@@ -12,7 +12,7 @@
     var phase1 = true;
 
     while(phase1) {
-        doTargetingLoop(ns);
+        await doTargetingLoop(ns);
     }
 
 
@@ -90,9 +90,9 @@ function updateServersNotRootedList() {
     }
 }
 
-function doTargetingLoop(ns) {
+async function doTargetingLoop(ns) {
     updateServersNotRootedList();
-    getRootOnPossibleServers(ns);
+    await getRootOnPossibleServers(ns);
     sortServers('ports');
 
     for(var i = 0; i < serversByPortsRequired.length; i++) {
@@ -103,26 +103,24 @@ function doTargetingLoop(ns) {
         }
 
         if(currentTarget.canCrack() && (!currentTarget.isPrepping() && !currentTarget.isTarget()) && (currentTarget.canHackcurrentTarget.security() > currentTarget.minSecurity || currentTarget.money() < currentTarget.maxMoney)) {
-            prepServer(ns, currentTarget);
+            await prepServer(ns, currentTarget);
             await ns.sleep(1000);
         }
 
         if(!currentTarget.isPrepping() && !currentTarget.isTarget() && (currentTarget.money() == currentTarget.maxMoney && currentTarget.security() == currentTarget.minSecurity)) {
-            hackServer(ns, currentTarget);
+            await hackServer(ns, currentTarget);
             await ns.sleep(1000);
         }
     }
-
-
 }
 
-function getRootOnPossibleServers(ns) {
+async function getRootOnPossibleServers(ns) {
     if(serversNotRooted.length > 0) {
         for(var i = 0; i < serversNotRooted.length; i++) {
             var target = serversNotRooted[0];
             if(!target.isRooted()) {
                 if(target.canCrack()) {
-                    doRoot(ns, target);
+                    await doRoot(ns, target);
                     await ns.sleep(200);
                 }
             }
@@ -130,7 +128,7 @@ function getRootOnPossibleServers(ns) {
     }
 }
 
-function doRoot(ns, server) {
+async function doRoot(ns, server) {
     for(var i = 0; i < server.portsRequired; i++) {
         if(portCrackers[i].exists()) {
             portCrackers[i].runAt(server.name);
@@ -140,10 +138,10 @@ function doRoot(ns, server) {
     ns.nuke(server.name);
 }
 
-function hackServer(ns, server) {
+async function hackServer(ns, server) {
     if(!server.isRooted()) {
         if(server.canCrack()) {
-            doRoot(ns, server);
+            await doRoot(ns, server);
         }
     }
 
@@ -155,10 +153,10 @@ function hackServer(ns, server) {
     ns.exec("/scripts/phase1/bn-hack-host.js", server.name, maxThreads);
 }
 
-function prepServer(ns, server) {
+async function prepServer(ns, server) {
     if(!server.isRooted()) {
         if(server.canCrack()) {
-            doRoot(ns, server);
+            await doRoot(ns, server);
         }
     }
 
@@ -168,10 +166,7 @@ function prepServer(ns, server) {
 
     var maxThreads = Math.floor(server.getRam() / RAM_COST_TO_PREP_PER_THREAD);
 
-    ns.exec("/scripts/phase1/bn-prep-host.js", server.name, maxThreads);
-    
-
-    
+    ns.exec("/scripts/phase1/bn-prep-host.js", server.name, maxThreads);  
 }
 
 function doesFileExistOnServer(ns, file, server) {
