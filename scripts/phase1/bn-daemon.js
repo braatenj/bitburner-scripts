@@ -6,22 +6,22 @@
  */
 
 
- const serversByName = [];
- const serversByValue = [];
- const serversByMaxMoney = [];
- const serversByRam = [];
- const serversByPortsRequired = [];
- const serversNotRooted = [];
- const portCrackers = [];
- const daemonHost = null;
+ var serversByName = [];
+ var serversByValue = [];
+ var serversByMaxMoney = [];
+ var serversByRam = [];
+ var serversByPortsRequired = [];
+ var serversNotRooted = [];
+ var portCrackers = [];
+ var daemonHost = null;
  
  //constants
  const RAM_COST_TO_PREP_PER_THREAD = 2.35;
  const RAM_COST_TO_HACK_PER_THREAD = 2.45;
 
  export async function main(ns) {
-     ns.tprint("BN-DAEMON STARTING");
-     daemonHost = ns.getHostname();
+    ns.tprint("BN-DAEMON STARTING");
+    daemonHost = ns.getHostname();
     buildServerList(ns);
     buildPortCrackerList(ns);
 
