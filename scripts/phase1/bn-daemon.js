@@ -103,7 +103,9 @@ function updateServersNotRootedList() {
 }
 
 async function doTargetingLoop(ns) {
+    ns.tprint("Executing Targeting Loop");
     updateServersNotRootedList();
+    ns.tprint("Getting root on servers");
     await getRootOnPossibleServers(ns);
     sortServers('ports');
 
@@ -115,11 +117,13 @@ async function doTargetingLoop(ns) {
         }
 
         if(currentTarget.canCrack() && (!currentTarget.isPrepping() && !currentTarget.isTarget()) && (currentTarget.canHackcurrentTarget.security() > currentTarget.minSecurity || currentTarget.money() < currentTarget.maxMoney)) {
+            ns.tprint("Starting to prep server: " + currentTarget.name);
             await prepServer(ns, currentTarget);
             await ns.sleep(1000);
         }
 
         if(!currentTarget.isPrepping() && !currentTarget.isTarget() && (currentTarget.money() == currentTarget.maxMoney && currentTarget.security() == currentTarget.minSecurity)) {
+            ns.tprint("Starting to hack server: " + currentTarget.name);
             await hackServer(ns, currentTarget);
             await ns.sleep(1000);
         }
