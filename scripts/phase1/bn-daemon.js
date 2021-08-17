@@ -55,7 +55,7 @@ function buildPortCracker(ns, crackName) {
                     break;
             }
         }
-    }
+    };
     return crack;
 }
 
@@ -137,7 +137,7 @@ function doRoot(ns, server) {
         }
         await ns.sleep(200);
     }
-    ns.nuke(server.name)
+    ns.nuke(server.name);
 }
 
 function hackServer(ns, server) {
@@ -204,7 +204,7 @@ function buildServerObject(ns, serverNode) {
         value: 1,
         isPrepping: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-prep-host.js", this.name); },
         isTarget: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-hack-host.js", this.name); },
-    }
+    };
     return server;
 }
 

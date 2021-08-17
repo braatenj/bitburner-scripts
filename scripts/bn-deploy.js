@@ -6,7 +6,8 @@
  */
 
 
-
+ var filesToDownload = ["/phase1/bn-daemon.js", "/phase1/bn-hack-host.js", "/phase1/bn-prep-host.js", "/phase2/bn-daemon.js", "/phase2/bn-host-manager.js"];
+ var host = "";
 
 export async function main(ns) {
     var data = ns.flags([
@@ -14,8 +15,7 @@ export async function main(ns) {
         ['rootURL', 'https://raw.githubusercontent.com/braatenj/bitburner-scripts/main/scripts'], //default starting path for file downloads
     ]);
     
-    var filesToDownload = ["/phase1/bn-daemon.js", "/phase1/bn-hack-host.js", "/phase1/bn-prep-host.js", "/phase2/bn-daemon.js", "/phase2/bn-host-manager.js"];
-    var host = ns.getHostname();
+    host = ns.getHostname();
     if(host != "home") {
         ns.tprint("Exiting bn-deploy.js must be run on 'home' host!");
         return;
