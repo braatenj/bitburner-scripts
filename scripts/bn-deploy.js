@@ -6,19 +6,24 @@
  */
 
 
-var data = flags([
-    ['phase', 1], //default phase 1 is fresh start, will jump to phase 2 after certain functions become available and bot can be more efficient
-    ['rootURL', 'raw.githubusercontent.com/braatenj/bitburner-scripts/main/'], //default starting path for file downloads
-]);
 
-var filesToDownload = [""];
 
 export async function main(ns) {
+    var data = ns.flags([
+        ['phase', 1], //default phase 1 is fresh start, will jump to phase 2 after certain functions become available and bot can be more efficient
+        ['rootURL', 'https://raw.githubusercontent.com/braatenj/bitburner-scripts/main/scripts'], //default starting path for file downloads
+    ]);
+    
+    var filesToDownload = ["/phase1/bn-daemon.js", "/phase1/bn-hack-host.js", "/phase1/bn-prep-host.js", "/phase2/bn-daemon.js", "/phase2/bn-host-manager.js"];
     var host = ns.getHostname();
     if(host != "home") {
+        ns.tprint("Exiting bn-deploy.js must be run on 'home' host!");
         return;
     }
 
-    await ns.wget(data.rootURL)
+    for(var i = 0; i < filesToDownload.length; i++) {
+        ns.tprint("Attempting to download file: " + data.rootURL + filesToDownload[i]);
+        await ns.wget(data.rootURL + filesToDownload[i], "/scripts" + filesToDownload[i]);
+    }
 }
 
