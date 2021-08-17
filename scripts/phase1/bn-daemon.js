@@ -118,7 +118,7 @@ async function doTargetingLoop(ns) {
             continue;
         }
 
-        if(currentTarget.canCrack() && (!currentTarget.isPrepping() && !currentTarget.isTarget()) && (currentTarget.canHackcurrentTarget.security() > currentTarget.minSecurity || currentTarget.money() < currentTarget.maxMoney)) {
+        if(currentTarget.canCrack() && (!currentTarget.isPrepping() && !currentTarget.isTarget()) && (currentTarget.security() > currentTarget.minSecurity || currentTarget.money() < currentTarget.maxMoney)) {
             ns.tprint("Starting to prep server: " + currentTarget.name);
             await prepServer(ns, currentTarget);
             await ns.sleep(1000);
@@ -178,7 +178,7 @@ async function prepServer(ns, server) {
         }
     }
 
-    if(!doesFileExistOnServer(ns, "/scipts/phase1/bn-prep-host.js", server)) {
+    if(!doesFileExistOnServer(ns, "/scripts/phase1/bn-prep-host.js", server)) {
         copyFiles(ns, ["/scripts/phase1/bn-prep-host.js", "/scripts/phase1/bn-hack-host.js"], server);
     }
 
@@ -216,8 +216,8 @@ function buildServerObject(ns, serverNode) {
         timeToHack: function() { return this.instance.getHackTime(this.name); },
         growthRate: ns.getServerGrowth(serverNode),
         value: 1,
-        isPrepping: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-prep-host.js", this.name); },
-        isTarget: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-hack-host.js", this.name); },
+        isPrepping: function() { return isFileRunningOnServer(this.instance, "bn-prep-host.js", this); },
+        isTarget: function() { return isFileRunningOnServer(this.instance, "bn-hack-host.js", this); },
         toString: function() { return "Name: " + this.name + " MaxMoney: " + this.maxMoney; }
     };
     return server;
