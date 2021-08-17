@@ -5,7 +5,7 @@
  * RAM Cost: 
  */
 
-
+//defined variables
  var serversByName = [];
  var serversByValue = [];
  var serversByMaxMoney = [];
@@ -21,6 +21,13 @@
 
  export async function main(ns) {
     ns.tprint("BN-DAEMON STARTING");
+    serversByName = [];
+    serversByValue = [];
+    serversByMaxMoney = [];
+    serversByRam = [];
+    serversByPortsRequired = [];
+    serversNotRooted = [];
+    portCrackers = [];
     daemonHost = ns.getHostname();
     buildServerList(ns);
     buildPortCrackerList(ns);
