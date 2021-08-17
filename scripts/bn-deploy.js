@@ -41,7 +41,7 @@ export async function main(ns) {
     if(data.phase == 1) {
         if(allFilesDownloaded(ns)) {
             ns.tprint("Verified all files downloaded successfully!");
-            await ns.run("/scripts/phase1/bn-daemon.js");
+            ns.spawn("/scripts/phase1/bn-daemon.js", 1);
         }
     }
 }
