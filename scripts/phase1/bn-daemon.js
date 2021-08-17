@@ -220,7 +220,7 @@ function buildServerList(ns) {
 
     while(hostsToScan.length > 0) {
         var hostName = hostsToScan.pop();
-        if(!serverNames.includes(hostName)) {
+        if(!serversbyName.includes(hostName)) {
             var connectHosts = ns.scan(hostName);
             for(var i = 0; i < connectHosts.length; i++) {
                 hostsToScan.push(connectHosts[i]);
