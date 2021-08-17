@@ -28,7 +28,7 @@ export async function main(ns) {
     await ns.wget("https://raw.githubusercontent.com/braatenj/bitburner-scripts/main/scripts/phase2/bn-daemon.js", "/scripts/phase2/bn-daemon.js");
     await ns.wget("https://raw.githubusercontent.com/braatenj/bitburner-scripts/main/scripts/phase2/bn-host-manager.js", "/scripts/phase2/bn-host-manager.js");
     */
-
+    ns.tprint("Starting download of files.");
 
     for(var i = 0; i < filesToDownload.length; i++) {
         //ns.tprint("Attempting to download file: " + data.rootURL + filesToDownload[i]);
@@ -36,8 +36,11 @@ export async function main(ns) {
         await ns.sleep(500);
     }
 
+    ns.tprint("Download of files complete.");
+
     if(data.phase == 1) {
         if(allFilesDownloaded(ns)) {
+            ns.tprint("Verified all files downloaded successfully!");
             await ns.run("/scripts/phase1/bn-daemon.js");
         }
     }

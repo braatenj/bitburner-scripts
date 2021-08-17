@@ -6,6 +6,7 @@
  */
 
  export async function main(ns) {
+     ns.tprint("BN-DAEMON STARTING");
     buildServerList(ns);
     buildPortCrackerList(ns);
 
