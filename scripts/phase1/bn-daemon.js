@@ -117,7 +117,7 @@ async function doTargetingLoop(ns) {
 
         if(currentTarget.canCrack() && (!currentTarget.isPrepping() && !currentTarget.isTarget()) && (currentTarget.security() > currentTarget.minSecurity || currentTarget.money() < currentTarget.maxMoney)) {
             ns.tprint("[BN-DAEMON] Prepping Host: " + currentTarget.name);
-            ns.tprint(currentTarget.canCrack() + " " + currentTarget.isPrepping() + currentTarget.isTarget());
+            ns.tprint(currentTarget.canCrack() + " " + currentTarget.isPrepping() + currentTarget.isTarget() + currentTarget.security() > currentTarget.minSecurity + " || " + currentTarget.money() < currentTarget.maxMoney);
             await prepServer(ns, currentTarget);
             await ns.sleep(1000);
         }
