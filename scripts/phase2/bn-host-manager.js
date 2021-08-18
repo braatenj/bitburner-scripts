@@ -1,3 +1,10 @@
+/**
+ * Author:  Jacob Braaten
+ * Desc:    Maps the network from "home" computer and drops in it file 'nmap.txt'
+ * Updated: 8/13/2021
+ * RAM Cost: 
+ */
+
 var purchasedServers = [];
 
 const maxPurchasedServerRam = 1048576;

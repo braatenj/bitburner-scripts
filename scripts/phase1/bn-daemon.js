@@ -20,7 +20,7 @@
  const RAM_COST_TO_HACK_PER_THREAD = 2.45;
 
  export async function main(ns) {
-    ns.tprint("BN-DAEMON STARTING");
+    daemonHost = ns.getHostname();
     serversByName = [];
     serversByValue = [];
     serversByMaxMoney = [];
@@ -28,13 +28,12 @@
     serversByPortsRequired = [];
     serversNotRooted = [];
     portCrackers = [];
-    daemonHost = ns.getHostname();
+    ns.sprintf("bn-daemon started on host: %s", daemonHost);
+    
     buildServerList(ns);
     buildPortCrackerList(ns);
 
     var phase1 = true;
-
-    serversByPortsRequired[0]
 
     while(phase1) {
         await doTargetingLoop(ns);
@@ -105,9 +104,7 @@ function updateServersNotRootedList() {
 }
 
 async function doTargetingLoop(ns) {
-    ns.tprint("Executing Targeting Loop");
     updateServersNotRootedList();
-    ns.tprint("Getting root on servers");
     await getRootOnPossibleServers(ns);
     sortServers('ports');
 
@@ -119,13 +116,13 @@ async function doTargetingLoop(ns) {
         }
 
         if(currentTarget.canCrack() && (!currentTarget.isPrepping() && !currentTarget.isTarget()) && (currentTarget.security() > currentTarget.minSecurity || currentTarget.money() < currentTarget.maxMoney)) {
-            ns.tprint("Starting to prep server: " + currentTarget.name);
+            ns.tprint("[BN-DAEMON] Prepping Host: " + currentTarget.name);
             await prepServer(ns, currentTarget);
             await ns.sleep(1000);
         }
 
         if(!currentTarget.isPrepping() && !currentTarget.isTarget() && (currentTarget.money() == currentTarget.maxMoney && currentTarget.security() == currentTarget.minSecurity)) {
-            ns.tprint("Starting to hack server: " + currentTarget.name);
+            ns.tprint("[BN-DAEMON] Hacking Host: " + currentTarget.name);
             await hackServer(ns, currentTarget);
             await ns.sleep(1000);
         }
@@ -188,7 +185,6 @@ async function prepServer(ns, server) {
 }
 
 function doesFileExistOnServer(ns, file, server) {
-    ns.tprint(server.toString());
     return ns.fileExists(file, server.name);
 }
 
@@ -224,8 +220,6 @@ function buildServerObject(ns, serverNode) {
 }
 
 function isFileRunningOnServer(ns, file, server) {
-    ns.tprint(server.toString());
-    ns.tprint(file);
     return ns.scriptRunning(file, server.name);
 }
 
