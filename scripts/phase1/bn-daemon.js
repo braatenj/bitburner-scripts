@@ -120,8 +120,14 @@ async function doTargetingLoop(ns) {
             ns.tprint("CanCrack: " + currentTarget.canCrack());
             ns.tprint("isPrepping: " + currentTarget.isPrepping());
             ns.tprint("isTarget: " + currentTarget.isTarget());
+            ns.tprint("security: " + currentTarget.security());
+            ns.tprint("minSecurity: " + currentTarget.minSecurity);
             ns.tprint("security > minSecurity: " + currentTarget.security() > currentTarget.minSecurity);
+            ns.tprint("money: " + currentTarget.money());
+            ns.tprint("maxMoney: " + currentTarget.maxMoney);
             ns.tprint("money < maxMoney: " + currentTarget.money() < currentTarget.maxMoney);
+
+
             await prepServer(ns, currentTarget);
             await ns.sleep(1000);
         }
