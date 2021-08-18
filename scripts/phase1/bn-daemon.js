@@ -223,8 +223,8 @@ function buildServerObject(ns, serverNode) {
         timeToHack: function() { return this.instance.getHackTime(this.name); },
         growthRate: ns.getServerGrowth(serverNode),
         value: 1,
-        isPrepping: function() { return isFileRunningOnServer(this.instance, "scripts/phase1/bn-prep-host.js", this); },
-        isTarget: function() { return isFileRunningOnServer(this.instance, "scripts/phase1/bn-hack-host.js", this); },
+        isPrepping: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-prep-host.js", this); },
+        isTarget: function() { return isFileRunningOnServer(this.instance, "/scripts/phase1/bn-hack-host.js", this); },
         toString: function() { return "Name: " + this.name + " MaxMoney: " + this.maxMoney; }
     };
     return server;
